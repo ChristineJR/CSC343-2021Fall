@@ -1,0 +1,161 @@
+-- Question 2
+--  How does the time increment influence the game status?
+
+SET SEARCH_PATH TO projectschema;
+DROP TABLE IF exists q2outoftime CASCADE;
+DROP TABLE IF exists q2resign CASCADE;
+DROP TABLE IF exists q2mate CASCADE;
+DROP TABLE IF exists q2draw CASCADE;
+DROP TABLE IF exists q2status CASCADE;
+
+-- A tuple in this relation represents one of the top 10 increments
+-- that is most likely to lead to status 'outoftime'.
+-- which is one of the 
+-- increment is the time+increment for a chess game,
+-- probability is the probability that this increment led to game status 'outoftime',
+-- and numUsed is the number of times that this increment is used in all games.
+-- probability is between 0.0 and 1.0.
+-- Order by probability descending, and when probability ties, order by numUsed descending.
+CREATE TABLE q2outoftime(
+	increment TEXT NOT NULL,
+	probability FLOAT NOT NULL,
+CHECK (probability >= 0.0 AND probability <= 1.0),
+	numUsed INT NOT NULL
+);
+
+-- A tuple in this relation represents one of the top 10 increments
+-- that is most likely to lead to status 'resign'.
+-- which is one of the 
+-- increment is the time+increment for a chess game,
+-- probability is the probability that this increment led to game status 'resign',
+-- and numUsed is the number of times that this increment is used in all games.
+-- probability is between 0.0 and 1.0.
+-- Order by probability descending, and when probability ties, order by numUsed descending.
+CREATE TABLE q2resign(
+	increment TEXT NOT NULL,
+	probability FLOAT NOT NULL,
+CHECK (probability >= 0.0 AND probability <= 1.0),
+	numUsed INT NOT NULL
+);
+
+-- A tuple in this relation represents one of the top 10 increments
+-- that is most likely to lead to status 'mate'.
+-- which is one of the 
+-- increment is the time+increment for a chess game,
+-- probability is the probability that this increment led to game status 'mate',
+-- and numUsed is the number of times that this increment is used in all games.
+-- probability is between 0.0 and 1.0.
+-- Order by probability descending, and when probability ties, order by numUsed descending.
+CREATE TABLE q2mate(
+	increment TEXT NOT NULL,
+	probability FLOAT NOT NULL,
+CHECK (probability >= 0.0 AND probability <= 1.0),
+	numUsed INT NOT NULL
+);
+
+-- A tuple in this relation represents one of the top 10 increments
+-- that is most likely to lead to status 'draw'.
+-- which is one of the 
+-- increment is the time+increment for a chess game,
+-- probability is the probability that this increment led to game status 'draw',
+-- and numUsed is the number of times that this increment is used in all games.
+-- probability is between 0.0 and 1.0.
+-- Order by probability descending, and when probability ties, order by numUsed descending.
+CREATE TABLE q2draw(
+	increment TEXT NOT NULL,
+	probability FLOAT NOT NULL,
+CHECK (probability >= 0.0 AND probability <= 1.0),
+	numUsed INT NOT NULL
+);
+
+-- A tuple in this relation represents  the number of times that the particular
+-- increment is used in all games.
+-- status is the final status of a game,
+-- and numGame is the number of times that this status happened in all games.
+-- status is either 'outoftime', 'resign', 'mate', or 'draw'.
+CREATE TABLE q2status(
+	status TEXT NOT NULL,
+CHECK (status IN ('outoftime', 'resign', 'mate', 'draw')),
+	numGame INT NOT NULL
+);
+
+-- Do this for each of the views that define our intermediate steps.  
+-- The IF EXISTS avoids generating an error the first time this file is imported.
+DROP VIEW IF EXISTS OutOfTime;
+DROP VIEW IF EXISTS Resign;
+DROP VIEW IF EXISTS Mate;
+DROP VIEW IF EXISTS Draw;
+DROP VIEW IF EXISTS Status;
+DROP VIEW IF EXISTS Increment;
+
+-- Define views for our intermediate steps here:
+
+-- Organize data about status grouped by increment.
+CREATE VIEW Increment AS
+SELECT increment, COUNT(gID) AS numUsed,
+CAST(COUNT(CASE WHEN status = 'outoftime'
+THEN 1 END) AS FLOAT)/COUNT(gID) AS outOfTime,
+CAST(COUNT(CASE WHEN status = 'resign'
+THEN 1 END) AS FLOAT)/COUNT(gID) AS resign,
+CAST(COUNT(CASE WHEN status = 'mate'
+THEN 1 END) AS FLOAT)/COUNT(gID) AS mate,
+CAST(COUNT(CASE WHEN status = 'draw'
+THEN 1 END) AS FLOAT)/COUNT(gID) AS draw
+FROM Game
+GROUP BY increment Having count(gid)>50;
+
+
+-- Filter out the top 10 increments that are most likely to lead to status 'outoftime'
+CREATE VIEW OutOfTime AS
+SELECT increment, outOfTime AS probability, numUsed
+FROM (SELECT * FROM Increment
+ORDER BY outOfTime DESC, numUsed DESC) AS t1
+LIMIT 10;
+
+-- Filter out the top 10 increments that are most likely to lead to status 'resign'
+CREATE VIEW Resign AS
+SELECT increment, resign AS probability, numUsed
+FROM (SELECT * FROM Increment
+ORDER BY resign DESC, numUsed DESC) AS t2
+LIMIT 10;
+
+-- Filter out the top 10 increments that are most likely to lead to status 'mate'
+CREATE VIEW Mate AS
+SELECT increment, mate AS probability, numUsed
+FROM (SELECT * FROM Increment
+ORDER BY mate DESC, numUsed DESC) AS t3
+LIMIT 10;
+
+-- Filter out the top 10 increments that are most likely to lead to status 'draw'
+CREATE VIEW Draw AS
+SELECT increment, draw AS probability, numUsed
+FROM (SELECT * FROM Increment
+ORDER BY draw DESC, numUsed DESC) AS t4
+LIMIT 10;
+
+-- Organize data about status grouped by status
+CREATE VIEW Status AS
+SELECT status, COUNT(gID) AS numGame
+FROM Game
+GROUP BY status;
+
+-- Our query that answers the question goes below the "insert into" line:
+insert into q2outoftime
+SELECT increment, probability, numUsed
+FROM OutOfTime;
+
+insert into q2resign
+SELECT increment, probability, numUsed
+FROM Resign;
+
+insert into q2mate
+SELECT increment, probability, numUsed
+FROM Mate;
+
+insert into q2draw
+SELECT increment, probability, numUsed
+FROM Draw;
+
+insert into q2status
+SELECT status, numGame
+FROM Status;

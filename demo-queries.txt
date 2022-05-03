@@ -1,0 +1,440 @@
+-------------------- Loading schema and data: --------------------
+
+schema.ddl
+psql:schema.ddl:6: NOTICE:  drop cascades to 26 other objects
+DETAIL:  drop cascades to table openingname
+drop cascades to table opening
+drop cascades to table game
+drop cascades to table player
+drop cascades to table q1
+drop cascades to view orderedname
+drop cascades to table q2outoftime
+drop cascades to table q2resign
+drop cascades to table q2mate
+drop cascades to table q2draw
+drop cascades to table q2status
+drop cascades to view increment
+drop cascades to view outoftime
+drop cascades to view resign
+drop cascades to view mate
+drop cascades to view draw
+drop cascades to view status
+drop cascades to table q3
+drop cascades to view start
+drop cascades to view higherblack
+drop cascades to view sameblack
+drop cascades to view lowerblack
+drop cascades to view higherwhite
+drop cascades to view samewhite
+drop cascades to view lowerwhite
+drop cascades to view combination
+DROP SCHEMA
+CREATE SCHEMA
+SET
+CREATE TABLE
+CREATE TABLE
+CREATE TABLE
+CREATE TABLE
+
+load.sql
+SET
+COPY 500
+COPY 360
+COPY 19111
+COPY 19111
+COPY 19111
+
+-------------------- Investigative Question 1: ------------------
+
+queries1.txt
+SET
+psql:queries1.txt:5: NOTICE:  table "q1" does not exist, skipping
+DROP TABLE
+CREATE TABLE
+psql:queries1.txt:26: NOTICE:  view "orderedname" does not exist, skipping
+DROP VIEW
+CREATE VIEW
+INSERT 0 27
+-------------------- Final result for q1: -----------------------
+<query label 1> select * from q1
+ eco |                      name                       |        win        |       draw
+-----+-------------------------------------------------+-------------------+-------------------
+ D26 | Queen's Gambit Accepted                         |             0.625 |             0.309
+ C34 | King's Gambit Accepted                          |             0.605 |             0.127
+ C70 | Ruy Lopez                                       |              0.58 |             0.167
+ C30 | King's Gambit Declined                          | 0.577749244712991 | 0.144385196374622
+ C57 | Two Knights                                     | 0.569436129032258 |           0.12888
+ C40 | King's Knight Opening                           | 0.565857954545455 | 0.166084090909091
+ B27 | Sicilian                                        |             0.565 |             0.241
+ C41 | Philidor Defense                                | 0.546838250254324 | 0.204662004069176
+ D33 | Queen's Gambit Declined, Tarrasch               |             0.545 |             0.301
+ E07 | Catalan, Closed                                 |             0.541 |             0.275
+ C32 | King's Gambit Declined, Falkbeer Counter Gambit |             0.538 |              0.21
+ E65 | King's Indian, Fianchetto, Yugoslav, 7.O-O      |             0.532 |             0.253
+ C44 | King's Pawn Game                                | 0.531989979322411 | 0.197275330046127
+ A18 | English, Mikenas-Carls                          | 0.531873563218391 | 0.243334975369458
+ A94 | Dutch, Stonewall with Ba3                       |             0.531 |             0.317
+ B32 | Sicilian                                        |             0.529 |             0.208
+ A99 | Dutch, Ilyin-Genevsky Variation with b3         |             0.528 |             0.271
+ B77 | Sicilian, Dragon, Yugoslav Attack               |             0.523 |             0.229
+ D07 | Queen's Gambit Declined, Chigorin Defense       | 0.522134644478063 | 0.302579425113464
+ A91 | Dutch Defense                                   |             0.521 |             0.286
+ C22 | Center Game                                     |             0.519 |             0.183
+ B01 | Scandinavian                                    | 0.514451830985915 | 0.246017464788732
+ C24 | Bishop's Opening                                | 0.508862068965517 | 0.178926724137931
+ A66 | Benoni                                          | 0.508429975429975 | 0.174398034398034
+ D35 | Queen's Gambit Declined                         | 0.507378759515787 | 0.293319168850618
+ D53 | Queen's Gambit Declined                         |             0.504 |             0.294
+ D51 | Queen's Gambit Declined                         |             0.501 |             0.315
+(27 rows)
+
+
+-------------------- Intermediate steps result for q1: -----------
+
+<query label 2> select * from orderedname
+ eco |                      name                       |        win        |       draw
+-----+-------------------------------------------------+-------------------+-------------------
+ D26 | Queen's Gambit Accepted                         |             0.625 |             0.309
+ C34 | King's Gambit Accepted                          |             0.605 |             0.127
+ C70 | Ruy Lopez                                       |              0.58 |             0.167
+ C30 | King's Gambit Declined                          | 0.577749244712991 | 0.144385196374622
+ C57 | Two Knights                                     | 0.569436129032258 |           0.12888
+ C40 | King's Knight Opening                           | 0.565857954545455 | 0.166084090909091
+ B27 | Sicilian                                        |             0.565 |             0.241
+ C41 | Philidor Defense                                | 0.546838250254324 | 0.204662004069176
+ D33 | Queen's Gambit Declined, Tarrasch               |             0.545 |             0.301
+ E07 | Catalan, Closed                                 |             0.541 |             0.275
+ C32 | King's Gambit Declined, Falkbeer Counter Gambit |             0.538 |              0.21
+ E65 | King's Indian, Fianchetto, Yugoslav, 7.O-O      |             0.532 |             0.253
+ C44 | King's Pawn Game                                | 0.531989979322411 | 0.197275330046127
+ A18 | English, Mikenas-Carls                          | 0.531873563218391 | 0.243334975369458
+ A94 | Dutch, Stonewall with Ba3                       |             0.531 |             0.317
+ B32 | Sicilian                                        |             0.529 |             0.208
+ A99 | Dutch, Ilyin-Genevsky Variation with b3         |             0.528 |             0.271
+ B77 | Sicilian, Dragon, Yugoslav Attack               |             0.523 |             0.229
+ D07 | Queen's Gambit Declined, Chigorin Defense       | 0.522134644478063 | 0.302579425113464
+ A91 | Dutch Defense                                   |             0.521 |             0.286
+ C22 | Center Game                                     |             0.519 |             0.183
+ B01 | Scandinavian                                    | 0.514451830985915 | 0.246017464788732
+ C24 | Bishop's Opening                                | 0.508862068965517 | 0.178926724137931
+ A66 | Benoni                                          | 0.508429975429975 | 0.174398034398034
+ D35 | Queen's Gambit Declined                         | 0.507378759515787 | 0.293319168850618
+ D53 | Queen's Gambit Declined                         |             0.504 |             0.294
+ D51 | Queen's Gambit Declined                         |             0.501 |             0.315
+(27 rows)
+
+
+-------------------- Investigative Question 2: ------------------
+
+queries2.txt
+SET
+psql:queries2.txt:5: NOTICE:  table "q2outoftime" does not exist, skipping
+DROP TABLE
+psql:queries2.txt:6: NOTICE:  table "q2resign" does not exist, skipping
+DROP TABLE
+psql:queries2.txt:7: NOTICE:  table "q2mate" does not exist, skipping
+DROP TABLE
+psql:queries2.txt:8: NOTICE:  table "q2draw" does not exist, skipping
+DROP TABLE
+psql:queries2.txt:9: NOTICE:  table "q2status" does not exist, skipping
+DROP TABLE
+CREATE TABLE
+CREATE TABLE
+CREATE TABLE
+CREATE TABLE
+CREATE TABLE
+psql:queries2.txt:84: NOTICE:  view "outoftime" does not exist, skipping
+DROP VIEW
+psql:queries2.txt:85: NOTICE:  view "resign" does not exist, skipping
+DROP VIEW
+psql:queries2.txt:86: NOTICE:  view "mate" does not exist, skipping
+DROP VIEW
+psql:queries2.txt:87: NOTICE:  view "draw" does not exist, skipping
+DROP VIEW
+psql:queries2.txt:88: NOTICE:  view "status" does not exist, skipping
+DROP VIEW
+psql:queries2.txt:89: NOTICE:  view "increment" does not exist, skipping
+DROP VIEW
+CREATE VIEW
+CREATE VIEW
+CREATE VIEW
+CREATE VIEW
+CREATE VIEW
+CREATE VIEW
+INSERT 0 10
+INSERT 0 10
+INSERT 0 10
+INSERT 0 10
+INSERT 0 4
+
+-------------------- Final result for q2: -----------------------
+<query label 3> select * from q2outoftime
+ increment |    probability     | numused
+-----------+--------------------+---------
+ 8+0       |  0.177619893428064 |     563
+ 9+0       |  0.173913043478261 |      92
+ 10+1      |  0.134328358208955 |      67
+ 180+0     |               0.12 |      75
+ 10+3      |  0.117241379310345 |     145
+ 7+2       |  0.105990783410138 |     217
+ 12+0      |  0.101694915254237 |      59
+ 10+0      | 0.0988308863512779 |    7356
+ 5+5       | 0.0926694329183956 |     723
+ 5+8       | 0.0871491875923191 |     677
+(10 rows)
+
+
+<query label 4> select * from select * from q2resign
+ increment |    probability    | numused
+-----------+-------------------+---------
+ 20+15     |  0.76271186440678 |      59
+ 45+45     | 0.715909090909091 |      88
+ 30+30     |            0.7125 |     160
+ 30+10     | 0.698630136986301 |      73
+ 180+180   | 0.660714285714286 |      56
+ 8+8       |              0.65 |      80
+ 15+10     | 0.648837209302326 |     430
+ 15+8      | 0.648648648648649 |      74
+ 7+5       | 0.644067796610169 |      59
+ 15+3      | 0.618181818181818 |      55
+(10 rows)
+
+
+<query label 5> select * from q2draw
+ increment |    probability     | numused
+-----------+--------------------+---------
+ 45+45     |              0.125 |      88
+ 30+10     |   0.10958904109589 |      73
+ 180+180   |  0.107142857142857 |      56
+ 180+0     |  0.106666666666667 |      75
+ 15+8      | 0.0945945945945946 |      74
+ 7+9       | 0.0925925925925926 |      54
+ 15+10     | 0.0837209302325581 |     430
+ 10+10     | 0.0771604938271605 |     324
+ 8+5       | 0.0746268656716418 |      67
+ 15+3      | 0.0727272727272727 |      55
+(10 rows)
+
+
+<query label 6> select * from q2mate
+ increment |    probability    | numused
+-----------+-------------------+---------
+ 20+20     |               0.5 |      52
+ 60+0      | 0.482142857142857 |      56
+ 7+9       | 0.425925925925926 |      54
+ 8+5       | 0.417910447761194 |      67
+ 9+0       | 0.402173913043478 |      92
+ 7+2       | 0.391705069124424 |     217
+ 10+8      | 0.390243902439024 |     123
+ 10+2      | 0.383333333333333 |     180
+ 20+0      | 0.380841121495327 |     428
+ 15+15     | 0.348355663824604 |     821
+(10 rows)
+
+
+<query label 7> select * from q2status
+  status   | numgame
+-----------+---------
+ outoftime |    1598
+ mate      |    5974
+ draw      |     846
+ resign    |   10693
+(4 rows)
+
+
+-------------------- Intermediate steps result for q2: -----------
+<query label 8> select * from increment limit 5
+ increment | numused |     outoftime      |      resign       |       mate        |        draw
+-----------+---------+--------------------+-------------------+-------------------+--------------------
+ 15+15     |     821 | 0.0365408038976857 | 0.568818514007308 | 0.348355663824604 | 0.0462850182704019
+ 8+0       |     563 |  0.177619893428064 | 0.497335701598579 |  0.27708703374778 | 0.0479573712255773
+ 5+8       |     677 | 0.0871491875923191 | 0.567208271787297 |  0.31314623338257 | 0.0324963072378139
+ 30+0      |     360 | 0.0333333333333333 | 0.597222222222222 | 0.319444444444444 |               0.05
+ 7+9       |      54 |  0.037037037037037 | 0.444444444444444 | 0.425925925925926 | 0.0925925925925926
+(5 rows)
+
+
+<query label 9> select * from outoftime
+ increment |    probability     | numused
+-----------+--------------------+---------
+ 8+0       |  0.177619893428064 |     563
+ 9+0       |  0.173913043478261 |      92
+ 10+1      |  0.134328358208955 |      67
+ 180+0     |               0.12 |      75
+ 10+3      |  0.117241379310345 |     145
+ 7+2       |  0.105990783410138 |     217
+ 12+0      |  0.101694915254237 |      59
+ 10+0      | 0.0988308863512779 |    7356
+ 5+5       | 0.0926694329183956 |     723
+ 5+8       | 0.0871491875923191 |     677
+(10 rows)
+
+
+<query label 10> select * from select * from resign
+ increment |    probability    | numused
+-----------+-------------------+---------
+ 20+15     |  0.76271186440678 |      59
+ 45+45     | 0.715909090909091 |      88
+ 30+30     |            0.7125 |     160
+ 30+10     | 0.698630136986301 |      73
+ 180+180   | 0.660714285714286 |      56
+ 8+8       |              0.65 |      80
+ 15+10     | 0.648837209302326 |     430
+ 15+8      | 0.648648648648649 |      74
+ 7+5       | 0.644067796610169 |      59
+ 15+3      | 0.618181818181818 |      55
+(10 rows)
+
+
+<query label 11> select * from draw
+ increment |    probability     | numused
+-----------+--------------------+---------
+ 45+45     |              0.125 |      88
+ 30+10     |   0.10958904109589 |      73
+ 180+180   |  0.107142857142857 |      56
+ 180+0     |  0.106666666666667 |      75
+ 15+8      | 0.0945945945945946 |      74
+ 7+9       | 0.0925925925925926 |      54
+ 15+10     | 0.0837209302325581 |     430
+ 10+10     | 0.0771604938271605 |     324
+ 8+5       | 0.0746268656716418 |      67
+ 15+3      | 0.0727272727272727 |      55
+(10 rows)
+
+
+<query label 12> select * from mate
+ increment |    probability    | numused
+-----------+-------------------+---------
+ 20+20     |               0.5 |      52
+ 60+0      | 0.482142857142857 |      56
+ 7+9       | 0.425925925925926 |      54
+ 8+5       | 0.417910447761194 |      67
+ 9+0       | 0.402173913043478 |      92
+ 7+2       | 0.391705069124424 |     217
+ 10+8      | 0.390243902439024 |     123
+ 10+2      | 0.383333333333333 |     180
+ 20+0      | 0.380841121495327 |     428
+ 15+15     | 0.348355663824604 |     821
+(10 rows)
+
+
+<query label 13> select * from status
+  status   | numgame
+-----------+---------
+ outoftime |    1598
+ mate      |    5974
+ draw      |     846
+ resign    |   10693
+(4 rows)
+
+
+-------------------- Investigative Question 3: ------------------
+
+queries3.txt
+SET
+psql:queries3.txt:7: NOTICE:  table "q3" does not exist, skipping
+DROP TABLE
+CREATE TABLE
+psql:queries3.txt:30: NOTICE:  view "combination" does not exist, skipping
+DROP VIEW
+psql:queries3.txt:31: NOTICE:  view "higherblack" does not exist, skipping
+DROP VIEW
+psql:queries3.txt:32: NOTICE:  view "sameblack" does not exist, skipping
+DROP VIEW
+psql:queries3.txt:33: NOTICE:  view "lowerblack" does not exist, skipping
+DROP VIEW
+psql:queries3.txt:34: NOTICE:  view "higherwhite" does not exist, skipping
+DROP VIEW
+psql:queries3.txt:35: NOTICE:  view "samewhite" does not exist, skipping
+DROP VIEW
+psql:queries3.txt:36: NOTICE:  view "lowerwhite" does not exist, skipping
+DROP VIEW
+psql:queries3.txt:37: NOTICE:  view "start" does not exist, skipping
+DROP VIEW
+CREATE VIEW
+CREATE VIEW
+CREATE VIEW
+CREATE VIEW
+CREATE VIEW
+CREATE VIEW
+CREATE VIEW
+CREATE VIEW
+INSERT 0 6
+
+-------------------- Final result for q3: -----------------------
+<query label 14> select * from q3
+ piece |  rate  |    probability    | numgame
+-------+--------+-------------------+---------
+ white | higher | 0.643085820510172 |    9683
+ black | higher | 0.601971190295679 |    9233
+ black | same   | 0.471794871794872 |     195
+ white | same   | 0.466666666666667 |     195
+ white | lower  | 0.349290588107874 |    9233
+ black | lower  | 0.312919549726324 |    9683
+(6 rows)
+
+
+-------------------- Intermediate steps result for q3: -----------
+<query label 15> select * from combination
+ piece |  rate  |    probability    | numgame
+-------+--------+-------------------+---------
+ white | higher | 0.643085820510172 |    9683
+ black | higher | 0.601971190295679 |    9233
+ black | same   | 0.471794871794872 |     195
+ white | same   | 0.466666666666667 |     195
+ white | lower  | 0.349290588107874 |    9233
+ black | lower  | 0.312919549726324 |    9683
+(6 rows)
+
+
+<query label 16> select * from higherblack
+ piece |  rate  |    probability    | numgame
+-------+--------+-------------------+---------
+ black | higher | 0.601971190295679 |    9233
+(1 row)
+
+
+<query label 17> select * from sameblack
+ piece | rate |    probability    | numgame
+-------+------+-------------------+---------
+ black | same | 0.471794871794872 |     195
+(1 row)
+
+
+<query label 18> select * from lowerblack
+ piece | rate  |    probability    | numgame
+-------+-------+-------------------+---------
+ black | lower | 0.312919549726324 |    9683
+(1 row)
+
+
+<query label 19> select * from higherwhite
+ piece |  rate  |    probability    | numgame
+-------+--------+-------------------+---------
+ white | higher | 0.643085820510172 |    9683
+(1 row)
+
+
+<query label 20> select * from samewhite
+ piece | rate |    probability    | numgame
+-------+------+-------------------+---------
+ white | same | 0.466666666666667 |     195
+(1 row)
+
+
+<query label 21> select * from lowerwhite
+ piece | rate  |    probability    | numgame
+-------+-------+-------------------+---------
+ white | lower | 0.349290588107874 |    9233
+(1 row)
+
+
+<query label 22> select * from start limit 5
+   gid    | ratingblack | ratingwhite | winner
+----------+-------------+-------------+--------
+ TZJHLljE |        1191 |        1500 | white
+ l1NXvwaE |        1261 |        1322 | black
+ mIICvQHh |        1500 |        1496 | white
+ kWKvrqYL |        1454 |        1439 | white
+ 9tXo1AUZ |        1469 |        1523 | white
+(5 rows)

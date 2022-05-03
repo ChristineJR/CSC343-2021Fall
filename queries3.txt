@@ -1,0 +1,123 @@
+-- Question 3
+-- Which of the combinations is likely to win a game?
+-- White with a lower player rating? White with a higher player rating?
+-- Black with a lower player rating? Or Black with a higher player rating?
+
+SET SEARCH_PATH TO projectschema;
+DROP TABLE IF exists q3 CASCADE;
+
+-- A tuple in this relation represents information about one possible combination of
+-- player’s piece and the situation of rating.
+-- piece is the colour of chess held by a player,
+-- rate is the situation of the player’s rating comparing with the opponent
+-- which is either 'higher', 'lower', or, 'same',
+-- probability is the probability that this combination wins,
+-- and numGame is the number of times that this combination happened in all games.
+-- probability is between 0.0 and 1.0.
+-- Order by probability descending, and when probability ties, order by numGame descending.
+CREATE TABLE q3(
+	piece TEXT NOT NULL,
+CHECK (piece IN ('black', 'white')),
+rate TEXT NOT NULL,
+CHECK (rate IN ('higher', 'lower', 'same')),
+	probability FLOAT NOT NULL,
+CHECK (probability >= 0.0 AND probability <= 1.0),
+numGame INT NOT NULL
+);
+
+-- Do this for each of the views that define our intermediate steps.  
+-- The IF EXISTS avoids generating an error the first time this file is imported.
+DROP VIEW IF EXISTS Combination;
+DROP VIEW IF EXISTS HigherBlack;
+DROP VIEW IF EXISTS SameBlack;
+DROP VIEW IF EXISTS LowerBlack;
+DROP VIEW IF EXISTS HigherWhite;
+DROP VIEW IF EXISTS SameWhite;
+DROP VIEW IF EXISTS LowerWhite;
+DROP VIEW IF EXISTS Start;
+
+-- Define views for our intermediate steps here:
+
+-- For each game gID, it has ratingBlack as the score representing how well
+-- the player with black pieces played in the chess game, ratingWhite as this
+-- score for the player with white pieces, and winner as the colour of chess
+-- held by the winning player.
+CREATE VIEW Start AS
+SELECT gID, ratingBlack, ratingWhite, winner 
+FROM (SELECT p1.rating AS ratingBlack, p2.rating AS ratingWhite, p1.gID
+FROM Player AS p1 CROSS JOIN Player AS p2
+WHERE p1.gID = p2.gID AND p1.pID != p2.pID AND p1.piece = 'black') AS p
+NATURAL JOIN Game AS g;
+
+-- Figure out the winning probability of the combination of player with black pieces
+-- and higher rating.
+CREATE VIEW HigherBlack AS
+SELECT 'black' AS piece, 'higher' AS rate,
+CAST(COUNT(CASE WHEN winner = 'black' AND ratingBlack > ratingWhite
+THEN 1 END) AS FLOAT)/COUNT(CASE WHEN ratingBlack > ratingWhite
+THEN 1 END) AS probability, COUNT(CASE WHEN ratingBlack > ratingWhite
+THEN 1 END) AS numGame
+FROM Start;
+
+-- Figure out the winning probability of the combination of player with black pieces
+-- and the same rating.
+CREATE VIEW SameBlack AS
+SELECT 'black' AS piece, 'same' AS rate,
+CAST(COUNT(CASE WHEN winner = 'black' AND ratingBlack = ratingWhite
+THEN 1 END) AS FLOAT)/COUNT(CASE WHEN ratingBlack = ratingWhite
+THEN 1 END) AS probability, COUNT(CASE WHEN ratingBlack = ratingWhite
+THEN 1 END) AS numGame
+FROM Start;
+
+-- Figure out the winning probability of the combination of player with black pieces
+-- and lower rating.
+CREATE VIEW LowerBlack AS
+SELECT 'black' AS piece, 'lower' AS rate,
+CAST(COUNT(CASE WHEN winner = 'black' AND ratingBlack < ratingWhite
+THEN 1 END) AS FLOAT)/COUNT(CASE WHEN ratingBlack < ratingWhite
+THEN 1 END) AS probability, COUNT(CASE WHEN ratingBlack < ratingWhite
+THEN 1 END) AS numGame
+FROM Start;
+
+-- Figure out the winning probability of the combination of player with white pieces
+-- and higher rating.
+CREATE VIEW HigherWhite AS
+SELECT 'white' AS piece, 'higher' AS rate,
+CAST(COUNT(CASE WHEN winner = 'white' AND ratingBlack < ratingWhite
+THEN 1 END) AS FLOAT)/COUNT(CASE WHEN ratingBlack < ratingWhite
+THEN 1 END) AS probability, COUNT(CASE WHEN ratingBlack < ratingWhite
+THEN 1 END) AS numGame
+FROM Start;
+
+-- Figure out the winning probability of the combination of player with white pieces
+-- and the same rating.
+CREATE VIEW SameWhite AS
+SELECT 'white' AS piece, 'same' AS rate,
+CAST(COUNT(CASE WHEN winner = 'white' AND ratingBlack = ratingWhite
+THEN 1 END) AS FLOAT)/COUNT(CASE WHEN ratingBlack = ratingWhite
+THEN 1 END) AS probability, COUNT(CASE WHEN ratingBlack = ratingWhite
+THEN 1 END) AS numGame
+FROM Start;
+
+-- Figure out the winning probability of the combination of player with white pieces
+-- and lower rating.
+CREATE VIEW LowerWhite AS
+SELECT 'white' AS piece, 'lower' AS rate,
+CAST(COUNT(CASE WHEN winner = 'white' AND ratingBlack > ratingWhite
+THEN 1 END) AS FLOAT)/COUNT(CASE WHEN ratingBlack > ratingWhite
+THEN 1 END) AS probability, COUNT(CASE WHEN ratingBlack > ratingWhite
+THEN 1 END) AS numGame
+FROM Start;
+
+-- Combine all data for the combinations together.
+CREATE VIEW Combination AS
+SELECT *
+FROM ((SELECT * FROM HigherBlack) UNION (SELECT * FROM SameBlack)
+UNION (SELECT * FROM LowerBlack) UNION (SELECT * FROM HigherWhite)
+UNION (SELECT * FROM SameWhite) UNION (SELECT * FROM LowerWhite)) AS c
+ORDER BY probability DESC, numGame DESC;
+
+-- Our query that answers the question goes below the "insert into" line:
+insert into q3
+SELECT piece, rate, probability, numGame
+FROM Combination;

@@ -1,0 +1,41 @@
+-- Question 1
+--  Which opening is the best to use in a chess game?
+
+SET SEARCH_PATH TO projectschema;
+DROP TABLE IF exists q1 CASCADE;
+
+-- A tuple in this relation represents some information of an opening.
+-- eco is the standardised code for any given opening,
+-- name is the name of the opening moves,
+-- win is the probability of winning,
+-- draw is the probability of draw,
+-- and lose is the probability of losing.
+-- All of win, draw, and lose are between 0.0 and 1.0.
+-- Order by win descending, and when win ties, order by draw descending.
+CREATE TABLE q1(
+	eco TEXT NOT NULL,
+name TEXT NOT NULL,
+	win FLOAT NOT NULL,
+	CHECK (win >= 0.0 AND win <= 1.0),
+	draw FLOAT NOT NULL,
+	CHECK (draw >= 0.0 AND draw <= 1.0)
+);
+
+-- Do this for each of the views that define our intermediate steps.  
+-- The IF EXISTS avoids generating an error the first time this file is imported.
+DROP VIEW IF EXISTS OrderedName;
+
+-- Define views for our intermediate steps here:
+
+-- Combine the data corresponding to eco with the name corresponding to eco,
+-- and then filter out the openings that satisfy our requirements.
+CREATE VIEW OrderedName AS
+SELECT eco, name, win, draw
+FROM Opening NATURAL JOIN OpeningName
+WHERE win > 0.5
+ORDER BY win DESC, draw DESC;
+
+-- Our query that answers the question goes below the "insert into" line:
+insert into q1
+SELECT eco, name, win, draw
+FROM OrderedName;
